@@ -1,0 +1,208 @@
+3.10. Išrinkite darbuotojų vardus, pavardes ir projekto pavadinimą, rodykite net ir tuos darbuotojus, kurie nedirba jokiame projekte.
+SELECT VYKDYTOJAI.PAVARDE, PROJEKTAI.PAVADINIMAS 
+FROM VYKDYTOJAI LEFT JOIN VYKDYMAS
+ON VYKDYTOJAI.NR=VYKDYMAS.VYKDYTOJAS
+LEFT JOIN PROJEKTAI 
+ON PROJEKTAI.NR=VYKDYMAS.PROJEKTAS 
+3.11.Išrinkite vykdytojų vardus, pavardes ir projekto pavadinimą, kurie yra (programuotojai arba analitikai) ir jų vykdymo valandos ne mažiau 250 valandų ir projekto trukmė ne trumpesnė nei 10 savaičių.
+SELECT VYKDYTOJAI.PAVARDE, PROJEKTAI.PAVADINIMAS 
+FROM VYKDYTOJAI LEFT JOIN VYKDYMAS
+ON VYKDYTOJAI.NR=VYKDYMAS.VYKDYTOJAS
+LEFT JOIN PROJEKTAI 
+ON PROJEKTAI.NR=VYKDYMAS.PROJEKTAS 
+WHERE VYKDYMAS.STATUSAS IN ('Programuotojas','Analitikas')
+AND VYKDYMAS.VALANDOS>=250
+AND PROJEKTAI.TRUKME>=10
+
+
+2.6 
+SELECT SHIPCOUNTRY, COUNT(*) FROM ORDERS GROUP BY SHIPCOUNTRY  HAVING COUNT(*) IN (
+(SELECT COUNT(*) FROM ORDERS 
+GROUP BY SHIPCOUNTRY
+ORDER BY COUNT(*)
+LIMIT 1),
+(SELECT COUNT(*) FROM ORDERS 
+GROUP BY SHIPCOUNTRY
+ORDER BY COUNT(*) DESC
+LIMIT 1)
+)
+ORDER BY COUNT(*)
+
+
+
+KONTRUOLINIS 
+1. Išrinkite visus duomenis iš lentelės "ORDERS".
+SELECT *
+FROM ORDERS 
+
+2. Išrinkite duomenis, kiek iš viso buvo įvykdyta užsakymų.
+
+SELECT ORDERID 
+FROM ORDERS 
+
+3. Išrinkite duomenis (užsakymo datą ir laivo vardą) apie visus krovinius į Prancūziją.
+SELECT ORDERDATE,SHIPNAME
+FROM ORDERS 
+WHERE SHIPCOUNTRY='France'
+4. Išrinkite užsakymus (užsakymo ID, užsakymo data ir šalis) apie visus krovinius, išsiųstus į šalis, prasidedančias raidėmis G, B arba A.
+SELECT ORDERID ,ORDERDATE,SHIPCOUNTRY 
+FROM ORDERS 
+WHERE SHIPCOUNTRY LIKE 'G%' OR SHIPCOUNTRY LIKE 'B%' OR SHIPCOUNTRY LIKE 'A%'
+
+
+5. Išrinkite duomenis (adresas, laivo vardas, šalis) apie užsakymus, kurių ORDERID yra nuo 10248 iki 10300.
+SELECT SHIPADDRESS ,SHIPNAME,SHIPCOUNTRY 
+FROM ORDERS 
+WHERE ORDERID BETWEEN 10248 AND 10300
+
+6. Išrinkite visus duomenis apie užsakymus, kurių numeriai yra 10250, 10260, 10270 (operatorius IN.)
+SELECT SHIPADDRESS ,SHIPNAME,SHIPCOUNTRY 
+FROM ORDERS 
+WHERE ORDERID IN (10250, 10260, 10270);
+
+7. Išrinkite visus duomenis apie užsakymus ir išrikiuokite duomenis pagal užsakymo datą nuo seniausios iki naujausios.
+
+SELECT *
+FROM ORDERS 
+ORDER BY ORDERDATE 
+
+8. Išveskite stulpelio FREIGHT vidurkį.
+SELECT AVG (FREIGHT) 
+FROM ORDERS 
+
+9. Išrinkite duomenis (šalis ir skaičius), kiek krovinių buvo išplukdyta į kiekvieną šalį.
+
+10. Išrinkite duomenis (šalis ir skaičius) kiek produktų buvo išplukdyta į kiekvieną šalį (produktai lentelėje ORDER_DETAILS).
+
+11. #9 punkto užklausą pataisykite taip, kad rodytų tik tas šalis, į kurias buvo išplukdyta daugiau nei 20 krovinių.
+SELECT
+
+SHIPCOUNTRY,
+
+COUNT(*)
+
+FROM ORDERS
+
+GROUP BY SHIPCOUNTRY
+
+HAVING COUNT(*)>20
+
+12. Įterpkite į lentelę PRODUCTS naują įrašą, užpildydami visus laukus, skirdami ID=1000, bei priskirkite produktą 'Seafood' kategorijai (lentelė CATEGORIES).
+13. Atnaujinkite duomenis apie produktą, priskirdami jį 'Beverages' kategorijai, kurio ID yra 23.
+
+14. Išrinkite duomenis (produkto pavadinimas, vieneto kaina, užsakymo numeris ir aptarnavęs darbuotojas), kokie produktai buvo užsakyti bei apie tuos, kurių niekas neužsakė.
+
+SELECT PRODUCTS.PRODUCTNAME, ORDER_DETAILS.UNITPRICE,ORDER_DETAILS.ORDERID, ORDERS.EMPLOYEEID, EMPLOYEES.FIRSTNAME 
+FROM ORDERS JOIN ORDER_DETAILS
+ON ORDER_DETAILS.ORDERID=ORDERS.ORDERID 
+RIGHT JOIN PRODUCTS 
+ON PRODUCTS.PRODUCTID=ORDER_DETAILS.PRODUCTID 
+LEFT JOIN EMPLOYEES 
+ON ORDERS.EMPLOYEEID=EMPLOYEES.EMPLOYEEID
+
+15. Ištrinkite iš lentelės PRODUCTS įrašą, kurį sukūrėte #12 užklausoje.
+
+PAPILDOMAI:
+
+Sujunkite visas NORTHWIND duomenų bazės lenteles į vieną naudojant JOIN. (išskyrus CUSTOMERCUSTOMERDEMO, CUSTOMERDEMOGRAPHICS, USSTATES lenteles) (Ats.: 10129 eilutės)
+
+
+
+Lietuvos bankas nori turėti informaciją apie žmones (vardas, pavardė, asm_kodas) ir bankus (nr, pavadinimas, būstinės adresas, trumpinys), kuriuose jie laiko sąskaitas bei jų balansą. Sudarykite projektą tokiai DB.
+
+Reikalinga: lentelės, stulpeliai, pirminiai raktai ir ryšiai tarp lentelių.
+
+Kontrolinė užklausa: kuriame banke Antanaitis turi daugiau nei 1000 eu?
+
+
+Zmones {
+	asm_kodas bigint pk
+	Vardas varchar
+	Pavarde varchar
+}
+
+Bankas {
+	Nr integer pk
+	Pavadinimas varchar
+	bustines_adresas varchar
+	trumpinys varchar
+}
+
+Banko_Zmones {
+	asm_kodas_zm bigint *> Zmones.asm_kodas
+	Banko_nr integer *> Bankas.Nr
+	Balansas integer
+	Valiuta varchar
+}
+
+Klinika nori laikyti ateinančių gyvūnų šeimininkų duomenis: vardą, pavardę, adresą, telefoną.
+
+Klinika nori laikyti kiekvieno paciento (gyvūno) duomenis: vardą, pavadinimą (katė, šuo ir pan.), veislę, gimimo datą.
+
+Klinikoje dirba 3 specialistai: jie „nepririšami“ prie gyvūnų, t.y. kitą dieną gyvūną gali priimti kitas specialistas.
+
+Klinika nori susieti šeimininkus ir jų gyvūnus su specialistais.
+
+Klinika taip pat nori laikyti taikomų paslaugų kainininką (paslauga, paslaugos kaina)
+
+*Vizito metu suteikta paslauga ir paslaugų kaina įrašomi ne iš paslaugų kainininko lentelės. Paslaugų kainininkas - tai tik informacija gyvūnų šeimininkams apie suteikiamas paslaugas bei jų įkainius. Vizito metu gali būti suteiktos kelios paslaugos ir šiame modelyje ši situacija nenagrinėjama.
+
+Kitus reikalingus Jūsų manymu stulpelius / atributus išvardintiems DB objektams, o taip pat lenteles (jei Jūs manote, kad jos reikalingos) numatykite patys.
+
+Reikalinga sąryšių lentelė.
+
+Kontrolinis klausimas: kieno gyvūnai lankėsi vakar, kuo skundėsi, koks jų amžius?
+
+
+Seimininkas {
+	Nr integer pk
+	Vardas varchar
+	Pavarde varchar
+	Adresas integer
+	Tel.numeris bigint
+}
+
+Gyvunas {
+	Nr integer pk
+	Vardas varchar
+	Pavadinimas varchar
+	Veisle varchar
+	gimimo_data date
+	Seimininku_Id integer >* Seimininkas.Nr
+}
+
+Specialistai {
+	NR date pk
+	Vardas varchar
+	Pavarde varchar
+}
+
+Gyvunai_specialistai {
+	Nr integer pk
+	Gyvuno_nr integer *>* Gyvunas.Nr
+	Specialisto_Nr integer *>* Specialistai.NR
+	Paslauga integer
+	Paslaugos integer
+	Data integer
+}
+
+Kainininkas {
+	Paslauga integer pk
+	Paslaugos_kaina integer
+}
+
+Gyvunu_pavadinimus {
+	id integer pk > Gyvunas.Pavadinimas
+	Suo integer
+	Katinas integer
+	Zuikis integer
+	Zuvyte integer
+}
+
+Veisle {
+	Nr integer > Gyvunas.Veisle
+	Vizra integer
+	Kurtas integer
+	Spicac integer
+	Dalmantinas integer
+}
